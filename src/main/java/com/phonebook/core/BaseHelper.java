@@ -10,7 +10,7 @@ import java.time.Duration;
 
 public class BaseHelper {
 
-    WebDriver driver;
+    protected WebDriver driver;
 
     public BaseHelper(WebDriver driver) {
         this.driver = driver;

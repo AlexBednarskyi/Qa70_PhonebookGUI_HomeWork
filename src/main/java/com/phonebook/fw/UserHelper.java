@@ -1,6 +1,7 @@
 package com.phonebook.fw;
 
 import com.phonebook.core.BaseHelper;
+import com.phonebook.models.User;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 

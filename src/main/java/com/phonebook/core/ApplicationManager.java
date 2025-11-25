@@ -1,5 +1,8 @@
 package com.phonebook.core;
 
+import com.phonebook.fw.ContactHelper;
+import com.phonebook.fw.HomePageHelper;
+import com.phonebook.fw.UserHelper;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
