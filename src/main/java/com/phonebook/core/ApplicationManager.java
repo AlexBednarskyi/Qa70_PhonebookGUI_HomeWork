@@ -38,7 +38,7 @@ public class ApplicationManager {
             driver = new SafariDriver();
         }else if(browser.equalsIgnoreCase("firefox"))
             WebDriverManager.firefoxdriver().setup();
-        driver= new FirefoxDriver();
+            driver = new FirefoxDriver();
 
         driver.get("https://telranedu.web.app/");
         driver.manage().window().maximize();
