@@ -1,52 +1,52 @@
 package com.phonebook.core;
 
-import org.openqa.selenium.remote.Browser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.ITestResult;
-import org.testng.annotations.*;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.AfterSuite;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.BeforeSuite;
+import org.testng.asserts.SoftAssert;
 
 import java.lang.reflect.Method;
 
 public class TestBase {
 
-    protected static ApplicationManager app = new ApplicationManager(System.getProperty("browser",Browser.CHROME.browserName()));
+    protected static ApplicationManager app = new ApplicationManager();
 
-    Logger logger = LoggerFactory.getLogger(TestBase.class);
-
-    @BeforeMethod(alwaysRun = true)
-    public void startTest(Method method){
-        logger.info("Start test {}",method.getName());
-    }
+    protected Logger logger = LoggerFactory.getLogger(TestBase.class);
+    protected SoftAssert softAssert;
 
     @BeforeSuite(alwaysRun = true)
-    public void setUp(){
+    public void setUp() {
         app.init();
     }
 
-   @AfterMethod(alwaysRun = true)
-   public void stopTest(ITestResult result){
-        if(result.isSuccess()){
-            logger.info("PASSED: {}", result.getMethod().getMethodName());
-        }else {
-            logger.error("FAILED: {} Screenshot: {}", result.getMethod()
-                    .getMethodName(),app.getContact()
-                    .takeScreenshot());
-        }
-        logger.info("Stop test");
-        logger.info("************************************");
-   }
     @AfterSuite(alwaysRun = true)
-    public void tearDown(){
+    public void tearDown() {
         app.stop();
     }
-        @BeforeGroups("smoky")
-    public void setUpSmokyGroup(){
-       logger.info("Start smoky test");
-    }
-        @AfterGroups("smoky")
-    public void stopSmokyTestGroup(){
-        logger.info("Stop smoky test");
 
-}
+    @BeforeMethod(alwaysRun = true)
+    public void startTest(Method method) {
+        logger.info("Start test: {}", method.getName());
+        softAssert = new SoftAssert();
+    }
+
+    @AfterMethod(alwaysRun = true)
+    public void stopTest(ITestResult result) {
+        String methodName = result.getMethod().getMethodName();
+
+        if (result.isSuccess()) {
+            logger.info("PASSED: {}", methodName);
+        } else {
+            String screenshot = "screen-" + System.currentTimeMillis() + ".png";
+            logger.error("FAILED: {} Screenshot: {}", methodName, screenshot);
+            app.getBase().takeScreenshot(screenshot);
+        }
+
+        logger.info("Stop test");
+        logger.info("************************************");
+    }
 }

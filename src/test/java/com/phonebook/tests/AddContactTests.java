@@ -13,20 +13,28 @@ import org.testng.annotations.Test;
 public class AddContactTests extends TestBase {
 
     @BeforeMethod(alwaysRun = true)
-    public void precondition(){
-        if(!app.getUser().isLoginLinkPresent()){
-            app.getUser().clickOnSignOutButton();
+    public void precondition() {
+        // 1. Всегда открываем главную страницу
+        app.getHomePage().openHomePage();
+
+        // 2. Если не залогинен – логинимся
+        if (!app.getUser().isSignOutButtonPresent()) {
+            app.getUser().clickOnLoginLink();
+            app.getUser().fillLoginRegisterForm(
+                    new User()
+                            .setEmail(UserData.email)
+                            .setPassword(UserData.password)
+            );
+            app.getUser().clickOnLoginButton();
+            app.getUser().pause(1000);
         }
-        app.getUser().clickOnLoginLink();
-        app.getUser().fillLoginRegisterForm(new User()
-                .setEmail(UserData.email)
-                .setPassword(UserData.password));
-        app.getUser().clickOnLoginButton();
     }
+
     @Test(groups = "smoky")
-    public void addContactPositiveTest(){
+    public void addContactPositiveTest() {
 
         app.getContact().clickOnAddLink();
+
         app.getContact().fillContactForm(new Contact()
                 .setName(ContactData.name)
                 .setLastName(ContactData.lastName)
@@ -34,13 +42,20 @@ public class AddContactTests extends TestBase {
                 .setEmail(ContactData.email)
                 .setAddress(ContactData.address)
                 .setDescription(ContactData.description));
+
         app.getContact().clickOnSaveButton();
-        Assert.assertTrue(app.getContact().isContactCreatedByText(ContactData.name));
+
+        Assert.assertTrue(
+                app.getContact().isContactCreatedByText(ContactData.name),
+                "Контакт с именем " + ContactData.name + " должен быть создан"
+        );
     }
 
-    @AfterMethod
-  public void postCondition(){
-      app.getContact().removeContact();
-  }
-
+    @AfterMethod(alwaysRun = true)
+    public void postCondition() {
+        // удаляем контакт только если он вообще есть
+        if (app.getContact().isContactListPresent()) {
+            app.getContact().removeContact();
+        }
+    }
 }

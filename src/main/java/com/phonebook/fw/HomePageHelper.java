@@ -6,15 +6,21 @@ import org.openqa.selenium.WebDriver;
 
 public class HomePageHelper extends BaseHelper {
 
+    private static final String BASE_URL = "https://telranedu.web.app";
+
     public HomePageHelper(WebDriver driver) {
         super(driver);
     }
 
-    public boolean isHomeComponentPresent(){
-        return isElementPresent(By.xpath("//div[2]//h1"));
+    public void openHomePage() {
+        driver.get(BASE_URL);
+    }
+
+    public boolean isHomeComponentPresent() {
+        return isElementPresent(By.xpath("//h1[contains(text(),'PHONEBOOK')]"));
     }
 
     public void clickOnHomeLink() {
-        click(By.cssSelector("[href='/home']"));
+        click(By.cssSelector("a[href='/']"));
     }
 }

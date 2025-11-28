@@ -7,43 +7,60 @@ import org.openqa.selenium.WebDriver;
 
 public class UserHelper extends BaseHelper {
 
-
     public UserHelper(WebDriver driver) {
         super(driver);
     }
 
-    public boolean isSignOutButtonPresent() {
-        return isElementPresent(By.xpath("//button[.='Sign Out']"));
-    }
+    // ===== ЛОКАТОРЫ =====
 
-    public void fillLoginRegisterForm(User user) {
-        type(By.name("email"), user.getEmail());
-        //driver.findElement(By.name("email")).sendKeys("manuel67"+i+"@gmail.com");
-        //enter password
-        type(By.name("password"), user.getPassword());
-    }
+    private By loginLink         = By.cssSelector("[href='/login']");
+    private By signOutButton     = By.xpath("//button[.='Sign Out']");
+    private By emailInput        = By.name("email");
+    private By passwordInput     = By.name("password");
+    private By loginButton       = By.name("login");
+    private By registrationButton= By.name("registration");
+
+    // ===== ДЕЙСТВИЯ С ЛОГИНОМ / РЕГИСТРАЦИЕЙ =====
 
     public void clickOnLoginLink() {
-        click(By.cssSelector("[href='/login']"));
-    }
-
-    public void clickOnRegistrationButton() {
-        click(By.name("registration"));
-    }
-
-    public void clickOnLoginButton() {
-        click(By.name("login"));
-    }
-
-    public boolean isLoginLinkPresent() {
-        return isElementPresent(By.cssSelector("[href='/login']"));
+        click(loginLink);
     }
 
     public void clickOnSignOutButton() {
-        click(By.xpath("//button[.='Sign Out']"));
+        click(signOutButton);
     }
 
-    public boolean isErrorMessagePresent() {
-        return isElementPresent(By.cssSelector(".login_login__3EHKB>div"));
+    public boolean isLoginLinkPresent() {
+        return isElementPresent(loginLink);
+    }
+
+    public boolean isSignOutButtonPresent() {
+        return isElementPresent(signOutButton);
+    }
+
+    public void fillLoginRegisterForm(User user) {
+        if (user.getEmail() != null) {
+            type(emailInput, user.getEmail());
+        }
+        if (user.getPassword() != null) {
+            type(passwordInput, user.getPassword());
+        }
+    }
+
+    public void clickOnLoginButton() {
+        click(loginButton);
+    }
+
+    public void clickOnRegistrationButton() {
+        click(registrationButton);
+    }
+
+
+    public void waitForLoginLink(int timeoutSec) {
+        waitForElementVisible(loginLink, timeoutSec);
+    }
+
+    public void waitForSignOutButton(int timeoutSec) {
+        waitForElementVisible(signOutButton, timeoutSec);
     }
 }

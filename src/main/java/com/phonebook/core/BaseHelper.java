@@ -1,26 +1,23 @@
 package com.phonebook.core;
 
-import com.google.common.io.Files;
 import org.openqa.selenium.*;
+import org.openqa.selenium.io.FileHandler;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.Duration;
 
 public class BaseHelper {
 
     protected WebDriver driver;
-    
 
     public BaseHelper(WebDriver driver) {
         this.driver = driver;
-       
-    }
-
-    public boolean isElementPresent(By locator){
-        return driver.findElements(locator).size()>0;
     }
 
     public void click(By locator) {
@@ -28,52 +25,72 @@ public class BaseHelper {
     }
 
     public void type(By locator, String text) {
-        if(text!=null) {
-            click(locator);
-            driver.findElement(locator).clear();
-            driver.findElement(locator).sendKeys(text);
+        if (text == null) {
+            return;
+        }
+        click(locator);
+        driver.findElement(locator).clear();
+        driver.findElement(locator).sendKeys(text);
+    }
+
+    public void pause(int millis) {
+        try {
+            Thread.sleep(millis);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+    }
+
+
+    // Ожидание видимости элемента
+    public void waitForElementVisible(By locator, int timeoutSec) {
+        new WebDriverWait(driver, Duration.ofSeconds(timeoutSec))
+                .until(ExpectedConditions.visibilityOfElementLocated(locator));
+    }
+
+    public void waitForElementClickable(By locator, int timeoutSec) {
+        new WebDriverWait(driver, Duration.ofSeconds(timeoutSec))
+                .until(ExpectedConditions.elementToBeClickable(locator));
+    }
+
+    public boolean isElementPresent(By locator) {
+        try {
+            return driver.findElements(locator).size() > 0;
+        } catch (UnhandledAlertException e) {
+            try {
+                driver.switchTo().alert().accept();
+            } catch (NoAlertPresentException ignored) {
+            }
+            return false;
         }
     }
 
     public boolean isAlertPresent() {
-        Alert alert = getWait(20)
-                .until(ExpectedConditions.alertIsPresent());
-        if (alert == null) {
-            return false;
-        } else {
-            driver.switchTo().alert().accept();
+        try {
+            driver.switchTo().alert();
             return true;
+        } catch (NoAlertPresentException e) {
+            return false;
         }
     }
 
-    public WebDriverWait getWait(int seconds) {
-        return new WebDriverWait(driver, Duration.ofSeconds(seconds));
-    }
-
-    public void pause(int millis){
+    public void takeScreenshot(String fileName) {
         try {
-            Thread.sleep(millis);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+            File src = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
 
-    }
-    public String takeScreenshot(){
-        try {
-            Alert alert = getWait(10).until(ExpectedConditions.alertIsPresent());
-            alert.accept();
-        } catch (NoAlertPresentException ignored) {
-        }
-
-        File tmp = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
-        File screenshot = new File("screenshots/screen-" + System.currentTimeMillis() + ".png");
-
-        try {
-            Files.copy(tmp,screenshot);
+            Path dir = Paths.get("screenshots");
+            if (!Files.exists(dir)) {
+                Files.createDirectories(dir);
+            }
+            Path dest = dir.resolve(fileName);
+            FileHandler.copy(src, dest.toFile());
+        } catch (UnhandledAlertException e) {
+            try {
+                driver.switchTo().alert().accept();
+            } catch (NoAlertPresentException ignored) {
+            }
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         }
-        return screenshot.getAbsolutePath();
     }
-
 }
