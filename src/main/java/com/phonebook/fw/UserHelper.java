@@ -11,7 +11,7 @@ public class UserHelper extends BaseHelper {
         super(driver);
     }
 
-    /
+    
 
     private By loginLink         = By.cssSelector("[href='/login']");
     private By signOutButton     = By.xpath("//button[.='Sign Out']");
