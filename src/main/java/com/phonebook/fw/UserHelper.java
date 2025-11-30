@@ -11,7 +11,7 @@ public class UserHelper extends BaseHelper {
         super(driver);
     }
 
-    // ===== ЛОКАТОРЫ =====
+    /
 
     private By loginLink         = By.cssSelector("[href='/login']");
     private By signOutButton     = By.xpath("//button[.='Sign Out']");
@@ -20,7 +20,7 @@ public class UserHelper extends BaseHelper {
     private By loginButton       = By.name("login");
     private By registrationButton= By.name("registration");
 
-    // ===== ДЕЙСТВИЯ С ЛОГИНОМ / РЕГИСТРАЦИЕЙ =====
+    
 
     public void clickOnLoginLink() {
         click(loginLink);
