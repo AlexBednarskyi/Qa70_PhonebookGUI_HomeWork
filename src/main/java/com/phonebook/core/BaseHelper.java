@@ -93,4 +93,11 @@ public class BaseHelper {
             e.printStackTrace();
         }
     }
+    public void acceptAlertIfPresent() {
+        try {
+            Alert alert = driver.switchTo().alert();
+            alert.accept();
+        } catch (NoAlertPresentException ignored) {
+}
+    }
 }

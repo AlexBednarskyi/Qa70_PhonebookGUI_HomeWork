@@ -24,8 +24,7 @@ public class LoginTests extends TestBase {
         app.getUser().clickOnLoginLink();
 
         app.getUser().fillLoginRegisterForm(
-                new User()
-                        .setPassword(UserData.password)
+                new User().setPassword(UserData.password)
         );
 
         app.getUser().clickOnLoginButton();
@@ -33,7 +32,7 @@ public class LoginTests extends TestBase {
 
         Assert.assertFalse(
                 app.getUser().isSignOutButtonPresent(),
-                "Ожидаем, что пользователь не залогинился (кнопки Sign Out быть не должно)"
+                "Ожидаем, что пользователь НЕ залогинился"
         );
     }
 
@@ -52,7 +51,7 @@ public class LoginTests extends TestBase {
 
         Assert.assertTrue(
                 app.getUser().isSignOutButtonPresent(),
-                "После успешного логина должна быть кнопка Sign Out"
+                "После логина должна быть кнопка Sign Out"
         );
     }
 }
